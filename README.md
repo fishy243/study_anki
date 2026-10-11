@@ -4,6 +4,44 @@ A clean, reusable workflow for generating and validating Anki decks.
 
 This repository is intentionally separate from the legacy `FS_2026_Anki` workspace.
 
+## Single generation entry point
+
+All deck generation uses the CLI in `anki_deck_builder.py`. There are no
+deck-specific builder scripts or alternate source-family pipelines.
+
+Install the runtime dependency:
+
+```bash
+python -m pip install -r requirements.txt
+```
+
+Build one validated deck from a JSON specification:
+
+```bash
+python anki_deck_builder.py --spec path/to/deck_spec.json
+```
+
+Check whether the cached `.apkg` is current without rebuilding it:
+
+```bash
+python anki_deck_builder.py --spec path/to/deck_spec.json --check
+```
+
+Force regeneration when the cache is current:
+
+```bash
+python anki_deck_builder.py --spec path/to/deck_spec.json --force
+```
+
+The specification may override the output location with `output_file`, or the
+CLI may override it for a one-off build:
+
+```bash
+python anki_deck_builder.py \
+  --spec path/to/deck_spec.json \
+  --output build/deck.apkg
+```
+
 ## Core contract
 
 The single builder validates every card before export. Each card must have:
