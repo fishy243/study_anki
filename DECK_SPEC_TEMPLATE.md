@@ -1,7 +1,15 @@
 # Deck Spec Template
 
-Use this as the shape for future `gcanki`-driven deck builds.
-Prefer one orchestrator script that generates the full spec, runs a light validation pass, and then exports the `.apkg`.
+Use this as the authoring contract for future `gcanki`-driven deck builds.
+OpenClaw may obtain the source from notes, Markdown, PDFs, textbooks, or raw
+text, but it must convert that material into this JSON specification before
+calling the single canonical builder,
+`anki_deck_builder.py --spec path/to/deck_spec.json`.
+
+The builder performs a mandatory final normalization pass immediately before
+export. It preserves valid authored HTML and semantics while adding metadata-
+backed Recall and NB blocks when they are absent. It then validates every
+normalized card and fails the build loudly if the contract is not satisfied.
 
 ## Card-writing register
 
@@ -27,8 +35,9 @@ academic textbook or technical manual.
   exactly.
 - Use bullets only for a short ordered set or contrast. Each bullet must have
   clear parallel structure and must not introduce a second concept.
-- Recall hooks, when used, must also use formal wording and must not introduce
-  another fact.
+- Every card must contain exactly one Recall hook. It must use formal wording,
+  summarize only the card's single concept, and must not introduce another
+  fact.
 
 ### Few-shot register examples
 
@@ -242,11 +251,17 @@ are well-defined and time-independent.
 Each card should follow the example deck pattern:
 
 - `front`: concise, context-complete question written in the formal register
-- `back`: 2-paragraph answer by default
+- `back`: at least two meaningful explanatory `<p>` paragraphs
 - `tags`: optional note tags
 - `front` should render bold in the question side for visual distinction
 - `back` should include at least one pointed red-bolded high-yield term when the concept warrants emphasis
-- Add exactly one `NB:` footer to every card. Use an actionable footer only when it supplies a concrete computational step that matches the exact concept; otherwise use the controlled `nb.mode="not_applicable"` metadata form with a truthful reason. Actionable notes should name a specific package, function, method, or short workflow that the learner can run within a few minutes, use the ecosystem that best fits the concept, and remain one short sentence or two clauses..
+- Add exactly one `NB:` footer to every card. Use an actionable footer only
+  when it supplies a concrete computational step that matches the exact
+  concept; otherwise use the controlled `nb.mode="not_applicable"` metadata
+  form with a truthful reason. Actionable notes should name a specific
+  package, function, method, or short workflow that the learner can run within
+  a few minutes, use the ecosystem that best fits the concept, and remain one
+  short sentence or two clauses.
 - Make each `NB:` concept-specific: the function or workflow must operationalize the fact being tested rather than restate its definition. Aim for diversity across the deck instead of repeating the same packages on every card. Good patterns include `naniar::vis_miss()` for missing-data patterns, `MatchIt::matchit()` followed by `cobalt::bal.tab()` for propensity-score balance, `AER::ivreg()` for instrumental variables, `survival::Surv()` plus `survival::survfit()` for censoring and Kaplan–Meier curves, `deSolve::ode()` for SIR dynamics, `stats::acf()` for autocorrelation, and `sklearn.model_selection.TimeSeriesSplit` inside a `Pipeline` for leakage-resistant validation.
 - For opaque technical or scientific terms, try a sound-alike or near-homophone first, then build the picture around that substitute.
 - When the card depends on exact counts, ordered lists, thresholds, or small sequences, consider a phonetic-number or peg-word cue so the numbers themselves become memorable.
@@ -261,7 +276,8 @@ Prefer this order when the concept supports it:
 1. Short opening explanation
 2. Second paragraph that tightens the causal or practical point
 3. Optional bullet list for contrasts or breakdowns
-4. A short `.callout` recall hook when useful
+4. Exactly one `.callout` Recall hook
+5. Exactly one `.nb` NB footer
 
 ## Visual Rules
 
@@ -286,6 +302,14 @@ Prefer this order when the concept supports it:
 {
   "front": "What are instrumental variables?",
   "back": "<p>...</p><p>...</p><div class=\"callout green\"><span class=\"green\">Recall hook:</span> ...</div>",
+  "recall_hook": {
+    "color": "green",
+    "text": "..."
+  },
+  "nb": {
+    "mode": "not_applicable",
+    "reason": "No direct computational operation applies."
+  },
   "tags": ["Tag"]
 }
 ```

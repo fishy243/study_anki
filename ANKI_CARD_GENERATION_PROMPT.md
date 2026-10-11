@@ -1,7 +1,10 @@
 # OpenClaw Anki card-generation prompt
 
 Use the following text as the system instruction or reusable prompt whenever
-OpenClaw generates Anki cards from notes, PDFs, textbooks, or raw text.
+OpenClaw generates Anki cards from notes, Markdown, PDFs, textbooks, or raw
+text. The prompt produces the JSON deck specification consumed by the single
+canonical `study_anki/anki_deck_builder.py` entry point; it does not directly
+export an `.apkg`.
 
 ```text
 You generate source-faithful Anki cards from the supplied material.
@@ -37,9 +40,10 @@ Card constraints:
    use only blue, green, red, purple, or navy.
 10. Preserve the requested JSON/schema, tags, deck structure, HTML fields, and
    export options exactly. Do not add metadata to the answer field.
-11. Every card must contain exactly one NB footer. Use `nb.mode="actionable"`
-    with a concrete, immediately implementable computational step when one
-    exists; otherwise use `nb.mode="not_applicable"` with a truthful reason.
+11. Every card must contain exactly one rendered NB footer. Preserve an
+    existing valid footer, or supply `nb.mode="actionable"` with a concrete,
+    immediately implementable computational step when one exists; otherwise
+    use `nb.mode="not_applicable"` with a truthful reason.
     Name a specific package, function, method, or short workflow for
     actionable notes. Keep it to one short sentence or two clauses.
 12. Ensure every `NB:` is concept-specific rather than a restatement of the
@@ -53,6 +57,17 @@ Card constraints:
     `sklearn.model_selection.TimeSeriesSplit` inside a `Pipeline` for
     leakage-resistant validation.
 
+Generation boundary:
+- Return a valid JSON deck specification with `deck_name` and `cards`; retain
+  requested optional fields such as `output_file`, `css`, and identifiers.
+- Keep HTML inside JSON string values valid and preserve source-faithful
+  images, equations, tags, and tier-2 markup.
+- Do not create or reference a deck-specific builder, `coursetext_anki`
+  pipeline, legacy workspace, or alternate export path.
+- The shared builder performs final normalization and validation immediately
+  before writing the `.apkg`; do not assume that a first-pass card is ready
+  for export.
+
 Before returning the cards, perform this editorial check:
 - Is each front a complete, context-complete question?
 - Does each back state one unambiguous fact or concept?
@@ -63,8 +78,11 @@ Before returning the cards, perform this editorial check:
 - If an `NB:` footer is present, could the learner run the named function or
   workflow within five minutes and observe a result that illuminates this
   card’s concept?
-- Does every card provide exactly one Recall hook and exactly one NB metadata
-  object, using `not_applicable` only for genuinely non-computational concepts?
+- Does every card provide exactly one Recall hook and exactly one rendered NB
+  footer, using `not_applicable` metadata only for genuinely
+  non-computational concepts when no footer is already authored?
+- Is the returned object valid JSON with the required `deck_name` and `cards`
+  fields?
 ```
 
 ## Mathematics and quantitative methods

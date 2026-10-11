@@ -1,13 +1,17 @@
 # study_anki
 
-A clean, reusable workflow for generating and validating Anki decks.
-
-This repository is intentionally separate from the legacy `FS_2026_Anki` workspace.
+A single, reusable workflow for turning source material into validated Anki
+decks. OpenClaw may start with notes, Markdown, PDFs, textbooks, or raw text,
+but the canonical builder consumes one JSON deck specification and produces
+one Anki package.
 
 ## Single generation entry point
 
-All deck generation uses the CLI in `anki_deck_builder.py`. There are no
-deck-specific builder scripts or alternate source-family pipelines.
+All deck generation uses the CLI in
+[`anki_deck_builder.py`](anki_deck_builder.py). There are no deck-specific
+builder scripts, `coursetext_anki` pipeline, or alternate source-family
+pipelines. Source material is transformed into the JSON specification before
+the shared builder is invoked.
 
 Install the runtime dependency:
 
@@ -42,19 +46,30 @@ python anki_deck_builder.py \
   --output build/deck.apkg
 ```
 
+The builder resolves relative image paths from the specification directory and
+packages referenced local images into the `.apkg`. Text-only cards require no
+media directory. The output is a standard Anki package; generated `.apkg`
+files and build-cache files are not source files and should remain untracked.
+
 ## Core contract
 
-The single builder validates every card before export. Each card must have:
+The builder performs a mandatory final normalization pass before export and
+then validates the normalized result. It fails loudly with a
+`CardValidationError` or specification error; it never exports a
+success-shaped package containing a malformed card. Each card must have:
 
-- at least two meaningful explanatory `<p>` paragraphs;
+- a non-empty, context-complete front;
+- at least two meaningful explanatory `<p>` paragraphs in the back;
 - exactly one Recall hook using blue, green, red, purple, or navy;
 - exactly one NB footer, either an actionable computational note or an explicit
   `not_applicable` metadata declaration;
 - preserved tags, valid HTML, images, equations, key-term markup, and tier-2
   styling.
 
-Tier-2 styling retains its independent palette, including gold, pink, orange,
-and teal.
+The Recall-hook palette is independent from tier-2 highlighting. Tier-2
+styling retains its existing palette, including gold, pink, orange, and teal.
+The builder does not rewrite card meaning, remove valid HTML, or remove
+referenced media.
 
 ## Card metadata
 
@@ -86,5 +101,16 @@ For genuinely non-computational concepts, use:
 Run the focused tests with:
 
 ```bash
-python -m unittest -v test_anki_budget_guard.py
+python -m unittest discover -s . -p 'test_*.py' -v
 ```
+
+## Supported specification shape
+
+The required top-level fields are `deck_name` and `cards`. Optional fields
+include `model_name`, `deck_id`, `model_id`, `output_file`, and `css`.
+Each card uses `front`, `back`, optional `tags`, optional `images`, and
+metadata objects named `recall_hook` and `nb` when the corresponding block is
+not already present in the back. See
+[`DECK_SPEC_TEMPLATE.md`](DECK_SPEC_TEMPLATE.md) for the authoring contract
+and [`ANKI_CARD_GENERATION_PROMPT.md`](ANKI_CARD_GENERATION_PROMPT.md) for
+the OpenClaw generation instructions.
