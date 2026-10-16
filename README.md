@@ -60,14 +60,15 @@ success-shaped package containing a malformed card. Each card must have:
 
 - a non-empty, context-complete front;
 - at least two meaningful explanatory `<p>` paragraphs in the back;
-- exactly one Recall hook using blue, green, red, purple, or navy;
+- exactly one Recall hook using blue, red, purple, or navy;
 - exactly one NB footer, either an actionable computational note or an explicit
   `not_applicable` metadata declaration;
 - preserved tags, valid HTML, images, equations, key-term markup, and tier-2
   styling.
 
 The Recall-hook palette is independent from tier-2 highlighting. Tier-2
-styling retains its existing palette, including gold, pink, orange, and teal.
+styling retains its existing palette, including green, gold, pink, orange,
+purple, and teal.
 The builder does not rewrite card meaning, remove valid HTML, or remove
 referenced media.
 

@@ -21,7 +21,7 @@ from deck_spec_helpers import (
 
 BUILD_CACHE_SUFFIX = ".build-cache.json"
 NORMALIZATION_CONTRACT_VERSION = "1"
-RECALL_HOOK_COLORS = {"blue", "green", "red", "purple", "navy"}
+RECALL_HOOK_COLORS = {"blue", "red", "purple", "navy"}
 NB_NOT_APPLICABLE_TEXT = "Not applicable — this concept has no direct computational operation."
 
 
@@ -72,7 +72,6 @@ DEFAULT_CSS = """
  margin: 1rem 0;
  border-radius: 0.3rem;
 }
-.callout.green { background: #eaf6f1; border-left-color: #2e7d73; }
 .callout.navy { background: #edf2f8; border-left-color: #17365d; }
 .callout.gold { background: #eaf2fb; border-left-color: #2e7d73; }
 .callout.red { background: #fdeceb; border-left-color: #b00000; }
@@ -215,7 +214,7 @@ def _recall_hook_matches(back: str) -> list[re.Match[str]]:
 
 def _recall_hook_color(match: re.Match[str]) -> str:
     classes = set(match.group(1).split())
-    for color in ("navy", "purple", "red", "green", "blue"):
+    for color in ("navy", "purple", "red", "blue"):
         if color in classes:
             return color
     return ""
@@ -281,7 +280,7 @@ def normalize_card(card: dict[str, Any], *, deck_name: str, card_index: int) -> 
     if hooks:
         color = _recall_hook_color(hooks[0])
         if color not in RECALL_HOOK_COLORS:
-            raise _card_error(deck_name, card_index, "Recall hook must use blue, green, red, purple, or navy")
+            raise _card_error(deck_name, card_index, "Recall hook must use blue, red, purple, or navy")
     elif "recall_hook" in card:
         back += _render_recall_hook(card["recall_hook"], deck_name, card_index)
     else:
@@ -312,7 +311,6 @@ def validate_normalized_card(card: dict[str, Any], *, deck_name: str, card_index
 
 def fix_light_hook_text_colors(back: str) -> str:
     back = back.replace('<span class="blue">Recall hook:</span>', '<span class="blue">Recall hook:</span>')
-    back = back.replace('<span class="green">Recall hook:</span>', '<span class="green">Recall hook:</span>')
     back = back.replace('<span class="gold">Recall hook:</span>', '<span class="gold">Recall hook:</span>')
     back = back.replace('<span class="red">Exam anchor:</span>', '<span class="red">Exam anchor:</span>')
     back = back.replace('<div class="callout red">', '<div class="callout gold">')

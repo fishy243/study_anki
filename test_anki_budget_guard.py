@@ -83,7 +83,7 @@ class BudgetGuardTests(unittest.TestCase):
             self.assertTrue(output_path.exists())
 
     def test_all_recall_colors_are_allowed_without_restricting_tier2_palette(self):
-        for color in ("blue", "green", "red", "purple", "navy"):
+        for color in ("blue", "red", "purple", "navy"):
             card = self.card(
                 recall_hook={"color": color, "text": "This is a valid recall hook."},
                 back=(
@@ -95,6 +95,18 @@ class BudgetGuardTests(unittest.TestCase):
             normalized = normalize_card(card, deck_name="Color Deck", card_index=1)
             self.assertIn(f'class="callout {color}"', normalized["back"])
             self.assertIn("tier2-gold", normalized["back"])
+
+    def test_green_recall_hook_is_rejected_while_tier2_green_remains_valid(self):
+        card = self.card(
+            recall_hook={"color": "green", "text": "Green is no longer an approved Recall-hook color."},
+            back=(
+                "<p>The concept is stated in the first paragraph.</p>"
+                "<p>The second paragraph provides the required context.</p>"
+                '<span class="tier2 tier2-green">tier-two term</span>'
+            ),
+        )
+        with self.assertRaisesRegex(CardValidationError, "unsupported Recall hook color"):
+            normalize_card(card, deck_name="Color Deck", card_index=1)
 
     def test_build_preserves_tags_and_writes_anki_package(self):
         with tempfile.TemporaryDirectory() as tmpdir:

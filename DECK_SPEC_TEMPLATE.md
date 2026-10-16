@@ -266,7 +266,9 @@ Each card should follow the example deck pattern:
 - For opaque technical or scientific terms, try a sound-alike or near-homophone first, then build the picture around that substitute.
 - When the card depends on exact counts, ordered lists, thresholds, or small sequences, consider a phonetic-number or peg-word cue so the numbers themselves become memorable.
 - For tier-2 yield terms, use soft background highlights that vary within the deck instead of reusing one flat accent for the whole deck.
-- Recall hooks must use exactly one of the five approved hook colors: blue, green, red, purple, or navy. Tier-2 highlighting is independent and may continue using gold, pink, orange, and teal.
+- Recall hooks must use exactly one of the four approved hook colors: blue,
+  red, purple, or navy. Tier-2 highlighting is independent and may continue
+  using green, gold, pink, orange, purple, and teal.
 - Validate the full spec before export and keep the generator step in one obvious command.
 
 ## Back HTML Pattern
@@ -289,7 +291,8 @@ Prefer this order when the concept supports it:
 ## Useful HTML Classes
 
 - `.key` for high-yield terms
-- `.callout`, `.callout.green`, `.callout.gold`, `.callout.red`
+- `.callout`, `.callout.blue`, `.callout.navy`, `.callout.red`,
+  `.callout.purple`
 - `.nb` for tiny applied-footnote hints
 - Add a rotating family of `.tier2-*` or equivalent soft-highlight styles for second-tier yield words and definitions, including `.tier2-red` when useful.
 - `.blue`, `.red`, `.green`, `.gold`, `.pink`, `.orange`, `.purple`, `.teal`
@@ -301,9 +304,9 @@ Prefer this order when the concept supports it:
 ```json
 {
   "front": "What are instrumental variables?",
-  "back": "<p>...</p><p>...</p><div class=\"callout green\"><span class=\"green\">Recall hook:</span> ...</div>",
+  "back": "<p>...</p><p>...</p><div class=\"callout navy\"><span class=\"navy\">Recall hook:</span> ...</div>",
   "recall_hook": {
-    "color": "green",
+    "color": "navy",
     "text": "..."
   },
   "nb": {

@@ -37,7 +37,7 @@ Card constraints:
    `recall_hook` metadata object when the back does not already contain a
    valid hook. Its text must use the same formal register, summarize only the
    card’s single concept, and introduce no additional fact. Recall hooks may
-   use only blue, green, red, purple, or navy.
+   use only blue, red, purple, or navy.
 10. Preserve the requested JSON/schema, tags, deck structure, HTML fields, and
    export options exactly. Do not add metadata to the answer field.
 11. Every card must contain exactly one rendered NB footer. Preserve an
