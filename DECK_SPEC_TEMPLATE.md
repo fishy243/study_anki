@@ -255,14 +255,24 @@ Each card should follow the example deck pattern:
 - `tags`: optional note tags
 - `front` should render bold in the question side for visual distinction
 - `back` should include at least one pointed red-bolded high-yield term when the concept warrants emphasis
-- Add exactly one `NB:` footer to every card. Use an actionable footer only
-  when it supplies a concrete computational step that matches the exact
-  concept; otherwise use the controlled `nb.mode="not_applicable"` metadata
-  form with a truthful reason. Actionable notes should name a specific
-  package, function, method, or short workflow that the learner can run within
-  a few minutes, use the ecosystem that best fits the concept, and remain one
-  short sentence or two clauses.
-- Make each `NB:` concept-specific: the function or workflow must operationalize the fact being tested rather than restate its definition. Aim for diversity across the deck instead of repeating the same packages on every card. Good patterns include `naniar::vis_miss()` for missing-data patterns, `MatchIt::matchit()` followed by `cobalt::bal.tab()` for propensity-score balance, `AER::ivreg()` for instrumental variables, `survival::Surv()` plus `survival::survfit()` for censoring and Kaplan–Meier curves, `deSolve::ode()` for SIR dynamics, `stats::acf()` for autocorrelation, and `sklearn.model_selection.TimeSeriesSplit` inside a `Pipeline` for leakage-resistant validation.
+- Add exactly one non-empty, actionable `NB:` footer to every card. Derive it
+  from the card's concept, preferring a direct implementation whenever
+  possible. If no direct implementation exists, use an honest adjacent
+  workflow that investigates, measures, visualizes, simulates, queries, tests,
+  or automates something meaningfully related to the concept. Always name a
+  specific package, function, method, command, application, or short workflow
+  and keep the note to one short sentence or two clauses. There is no
+  `not_applicable` option.
+- Actively search for the best NB application rather than adding a generic
+  footer after drafting the card. Never repeat the same exact NB idea,
+  operation, function, or workflow across cards; vary the tool, operation,
+  data task, or analytical angle while preserving a truthful connection.
+  Suitable ecosystems include Python, R and RStudio, SQL and PostgreSQL
+  (including SQLWorkbench), NoSQL, Excel and Microsoft 365, Google Sheets,
+  MATLAB or Octave, Julia, SAS, SPSS, Stata, Tableau, Power BI, Spark,
+  PySpark, dbt, Git, GitHub Actions, Linux, Bash, Docker, Jupyter, Quarto,
+  REST and JSON tools, C, C++, Java, JavaScript, and domain tools such as
+  NONMEM, Monolix, Phoenix WinNonlin, REDCap, QGIS, and ImageJ.
 - For opaque technical or scientific terms, try a sound-alike or near-homophone first, then build the picture around that substitute.
 - When the card depends on exact counts, ordered lists, thresholds, or small sequences, consider a phonetic-number or peg-word cue so the numbers themselves become memorable.
 - For tier-2 yield terms, use soft background highlights that vary within the deck instead of reusing one flat accent for the whole deck.
@@ -310,8 +320,8 @@ Prefer this order when the concept supports it:
     "text": "..."
   },
   "nb": {
-    "mode": "not_applicable",
-    "reason": "No direct computational operation applies."
+    "mode": "actionable",
+    "text": "In Python, pandas.DataFrame.value_counts() can quantify the observed categories."
   },
   "tags": ["Tag"]
 }

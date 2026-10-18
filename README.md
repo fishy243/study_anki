@@ -61,8 +61,7 @@ success-shaped package containing a malformed card. Each card must have:
 - a non-empty, context-complete front;
 - at least two meaningful explanatory `<p>` paragraphs in the back;
 - exactly one Recall hook using blue, red, purple, or navy;
-- exactly one NB footer, either an actionable computational note or an explicit
-  `not_applicable` metadata declaration;
+- exactly one non-empty, actionable NB footer inferred from the card's concept;
 - preserved tags, valid HTML, images, equations, key-term markup, and tier-2
   styling.
 
@@ -90,14 +89,10 @@ referenced media.
 }
 ```
 
-For genuinely non-computational concepts, use:
-
-```json
-"nb": {
-  "mode": "not_applicable",
-  "reason": "This definitional card has no direct computational operation."
-}
-```
+Every card must use `nb.mode="actionable"`. The note may name a direct
+implementation or an honest adjacent workflow such as a query, visualization,
+simulation, diagnostic, or data transformation. Do not reuse the same exact NB
+idea across cards.
 
 Run the focused tests with:
 

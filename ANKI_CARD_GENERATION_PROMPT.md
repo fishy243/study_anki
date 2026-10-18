@@ -40,22 +40,29 @@ Card constraints:
    use only blue, red, purple, or navy.
 10. Preserve the requested JSON/schema, tags, deck structure, HTML fields, and
    export options exactly. Do not add metadata to the answer field.
-11. Every card must contain exactly one rendered NB footer. Preserve an
-    existing valid footer, or supply `nb.mode="actionable"` with a concrete,
-    immediately implementable computational step when one exists; otherwise
-    use `nb.mode="not_applicable"` with a truthful reason.
-    Name a specific package, function, method, or short workflow for
-    actionable notes. Keep it to one short sentence or two clauses.
-12. Ensure every `NB:` is concept-specific rather than a restatement of the
-    answer. Prefer diverse tools across a deck and avoid repeating the same
-    packages on every card. Suitable patterns include `naniar::vis_miss()` for
-    missing-data patterns, `MatchIt::matchit()` followed by
-    `cobalt::bal.tab()` for propensity-score balance, `AER::ivreg()` for
-    instrumental variables, `survival::Surv()` plus `survival::survfit()` for
-    censoring and Kaplan–Meier curves, `deSolve::ode()` for SIR dynamics,
-    `stats::acf()` for autocorrelation, and
-    `sklearn.model_selection.TimeSeriesSplit` inside a `Pipeline` for
-    leakage-resistant validation.
+11. Every card must contain exactly one rendered, non-empty, actionable NB
+    footer. Supply `nb.mode="actionable"` with a concrete computational,
+    analytical, visualization, query, simulation, automation, or diagnostic
+    step inferred from the card's concept. There is no `not_applicable` mode.
+    Prefer a direct implementation of the concept; when that is not possible,
+    choose an honest adjacent workflow that would help the learner investigate,
+    measure, visualize, simulate, query, or test the concept. Name a specific
+    package, function, method, command, application, or short workflow and
+    keep the note to one short sentence or two clauses.
+12. Actively search for the best NB application before writing the card, rather
+    than treating the NB as an afterthought. Do not repeat the same exact NB
+    idea, operation, function, or workflow across cards; vary the ecosystem,
+    operation, data task, or analytical angle while keeping the connection
+    truthful and concept-specific. Useful ecosystems include Python
+    (NumPy, pandas, SciPy, Matplotlib, seaborn, scikit-learn, PyTorch, and
+    PyMC), R and RStudio (tidyverse, ggplot2, data.table, survival, Stan, and
+    mrgsolve), SQL and PostgreSQL (including SQLWorkbench), NoSQL, Excel and
+    Microsoft 365 (formulas, PivotTables, Power Query, Power Pivot, VBA, and
+    Office Scripts), Google Sheets, MATLAB or Octave, Julia, SAS, SPSS, Stata,
+    Tableau, Power BI, Spark or PySpark, dbt, Git, GitHub Actions, Linux and
+    Bash, Docker, Jupyter, Quarto, REST and JSON tools, C, C++, Java,
+    JavaScript, and domain tools such as NONMEM, Monolix, Phoenix WinNonlin,
+    REDCap, QGIS, and ImageJ.
 
 Generation boundary:
 - Return a valid JSON deck specification with `deck_name` and `cards`; retain
@@ -75,12 +82,14 @@ Before returning the cards, perform this editorial check:
 - Would the wording be acceptable in a carefully edited textbook?
 - Have casual phrases and sentence fragments been replaced without changing
   the source meaning?
-- If an `NB:` footer is present, could the learner run the named function or
-  workflow within five minutes and observe a result that illuminates this
-  card’s concept?
-- Does every card provide exactly one Recall hook and exactly one rendered NB
-  footer, using `not_applicable` metadata only for genuinely
-  non-computational concepts when no footer is already authored?
+- Could the learner run the named function or workflow within five minutes and
+  observe a result that illuminates this card's concept?
+- Does every card provide exactly one Recall hook and exactly one rendered,
+  non-empty actionable NB footer?
+- Is the NB directly inferred from the card, or an honest adjacent application
+  selected after actively searching for a useful connection?
+- Is the NB distinct from the exact NB idea used on every other card in the
+  deck?
 - Is the returned object valid JSON with the required `deck_name` and `cards`
   fields?
 ```

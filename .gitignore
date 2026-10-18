@@ -3,3 +3,5 @@ __pycache__/
 *.apkg
 *.apkg.build-cache.json
 .DS_Store
+*spec.json
+*.md

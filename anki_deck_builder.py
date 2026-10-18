@@ -224,6 +224,26 @@ def _nb_block_count(back: str) -> int:
     return len(re.findall(r'<div\b[^>]*class="[^"]*\bnb\b[^"]*"[^>]*>', back, flags=re.IGNORECASE))
 
 
+def _nb_text(back: str) -> str:
+    match = re.search(
+        r'<div\b[^>]*class="[^"]*\bnb\b[^"]*"[^>]*>.*?<strong>\s*NB:\s*</strong>(.*?)</div>',
+        back,
+        flags=re.IGNORECASE | re.DOTALL,
+    )
+    if not match:
+        return ""
+    text = html.unescape(re.sub(r"<[^>]+>", " ", match.group(1)))
+    return re.sub(r"\s+", " ", text).strip()
+
+
+def _validate_nb_footer(back: str, deck_name: str, card_index: int) -> None:
+    text = _nb_text(back)
+    if not text:
+        raise _card_error(deck_name, card_index, "NB footer must contain non-empty actionable content")
+    if text.casefold() == NB_NOT_APPLICABLE_TEXT.casefold():
+        raise _card_error(deck_name, card_index, "NB footer must be actionable; not_applicable is no longer supported")
+
+
 def _render_recall_hook(metadata: Any, deck_name: str, card_index: int) -> str:
     if not isinstance(metadata, dict):
         raise _card_error(deck_name, card_index, "recall_hook metadata must be an object")
@@ -244,17 +264,11 @@ def _render_nb(metadata: Any, deck_name: str, card_index: int) -> str:
     if not isinstance(metadata, dict):
         raise _card_error(deck_name, card_index, "nb metadata must be an object")
     mode = str(metadata.get("mode", "")).strip().casefold()
-    if mode == "actionable":
-        text = str(metadata.get("text", "")).strip()
-        if not text:
-            raise _card_error(deck_name, card_index, "actionable NB metadata requires non-empty text")
-    elif mode == "not_applicable":
-        reason = str(metadata.get("reason", "")).strip()
-        if not reason:
-            raise _card_error(deck_name, card_index, "not_applicable NB metadata requires a reason")
-        text = NB_NOT_APPLICABLE_TEXT
-    else:
-        raise _card_error(deck_name, card_index, "nb.mode must be 'actionable' or 'not_applicable'")
+    if mode != "actionable":
+        raise _card_error(deck_name, card_index, "nb.mode must be 'actionable'")
+    text = str(metadata.get("text", "")).strip()
+    if not text:
+        raise _card_error(deck_name, card_index, "actionable NB metadata requires non-empty text")
     return f'<div class="nb"><strong>NB:</strong> {html.escape(text, quote=False)}</div>'
 
 
@@ -293,6 +307,7 @@ def normalize_card(card: dict[str, Any], *, deck_name: str, card_index: int) -> 
         if "nb" not in card:
             raise _card_error(deck_name, card_index, "missing NB footer and nb metadata")
         back += _render_nb(card["nb"], deck_name, card_index)
+    _validate_nb_footer(back, deck_name, card_index)
 
     normalized["front"] = front
     normalized["back"] = back
@@ -305,8 +320,10 @@ def validate_normalized_card(card: dict[str, Any], *, deck_name: str, card_index
     hooks = _recall_hook_matches(str(card["back"]))
     if len(hooks) != 1 or _recall_hook_color(hooks[0]) not in RECALL_HOOK_COLORS:
         raise _card_error(deck_name, card_index, "normalized card must have exactly one approved Recall hook")
-    if _nb_block_count(str(card["back"])) != 1:
+    back = str(card["back"])
+    if _nb_block_count(back) != 1:
         raise _card_error(deck_name, card_index, "normalized card must have exactly one NB footer")
+    _validate_nb_footer(back, deck_name, card_index)
 
 
 def fix_light_hook_text_colors(back: str) -> str:

@@ -67,20 +67,32 @@ class BudgetGuardTests(unittest.TestCase):
                     Path(tmpdir),
                 )
 
-    def test_not_applicable_nb_footer_is_rendered(self):
-        with tempfile.TemporaryDirectory() as tmpdir:
-            spec_dir = Path(tmpdir)
-            card = self.card()
-            card.pop("nb")
-            card["nb"] = {
+    def test_not_applicable_nb_mode_is_rejected(self):
+        card = self.card(
+            nb={
                 "mode": "not_applicable",
                 "reason": "This definitional card has no direct computational operation.",
             }
-            output_path, _, _ = build_deck(
-                {"deck_name": "Noncomputational Mini Deck", "cards": [card]},
-                spec_dir,
+        )
+        with self.assertRaisesRegex(CardValidationError, "nb.mode must be 'actionable'"):
+            normalize_card(card, deck_name="Noncomputational Mini Deck", card_index=1)
+
+    def test_empty_actionable_nb_text_is_rejected(self):
+        card = self.card(nb={"mode": "actionable", "text": "  "})
+        with self.assertRaisesRegex(CardValidationError, "requires non-empty text"):
+            normalize_card(card, deck_name="Invalid NB Deck", card_index=1)
+
+    def test_legacy_nb_fallback_footer_is_rejected(self):
+        card = self.card(
+            back=(
+                "<p>The concept is stated in the first paragraph.</p>"
+                "<p>The second paragraph provides the required context.</p>"
+                '<div class="nb"><strong>NB:</strong> Not applicable — this concept has no direct computational operation.</div>'
             )
-            self.assertTrue(output_path.exists())
+        )
+        card.pop("nb")
+        with self.assertRaisesRegex(CardValidationError, "must be actionable"):
+            normalize_card(card, deck_name="Legacy NB Deck", card_index=1)
 
     def test_all_recall_colors_are_allowed_without_restricting_tier2_palette(self):
         for color in ("blue", "red", "purple", "navy"):
