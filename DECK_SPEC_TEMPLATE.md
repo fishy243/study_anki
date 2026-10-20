@@ -1,7 +1,15 @@
 # Deck Spec Template
 
-Use this as the shape for future `gcanki`-driven deck builds.
-Prefer one orchestrator script that generates the full spec, runs a light validation pass, and then exports the `.apkg`.
+Use this as the authoring contract for future `gcanki`-driven deck builds.
+OpenClaw may obtain the source from notes, Markdown, PDFs, textbooks, or raw
+text, but it must convert that material into this JSON specification before
+calling the single canonical builder,
+`anki_deck_builder.py --spec path/to/deck_spec.json`.
+
+The builder performs a mandatory final normalization pass immediately before
+export. It preserves valid authored HTML and semantics while adding metadata-
+backed Recall and NB blocks when they are absent. It then validates every
+normalized card and fails the build loudly if the contract is not satisfied.
 
 ## Card-writing register
 
@@ -27,8 +35,9 @@ academic textbook or technical manual.
   exactly.
 - Use bullets only for a short ordered set or contrast. Each bullet must have
   clear parallel structure and must not introduce a second concept.
-- Recall hooks, when used, must also use formal wording and must not introduce
-  another fact.
+- Every card must contain exactly one Recall hook. It must use formal wording,
+  summarize only the card's single concept, and must not introduce another
+  fact.
 
 ### Few-shot register examples
 
@@ -242,16 +251,34 @@ are well-defined and time-independent.
 Each card should follow the example deck pattern:
 
 - `front`: concise, context-complete question written in the formal register
-- `back`: 2-paragraph answer by default
+- `back`: at least two meaningful explanatory `<p>` paragraphs
 - `tags`: optional note tags
 - `front` should render bold in the question side for visual distinction
 - `back` should include at least one pointed red-bolded high-yield term when the concept warrants emphasis
-- Add exactly one `NB:` footer to every card. Use an actionable footer only when it supplies a concrete computational step that matches the exact concept; otherwise use the controlled `nb.mode="not_applicable"` metadata form with a truthful reason. Actionable notes should name a specific package, function, method, or short workflow that the learner can run within a few minutes, use the ecosystem that best fits the concept, and remain one short sentence or two clauses..
-- Make each `NB:` concept-specific: the function or workflow must operationalize the fact being tested rather than restate its definition. Aim for diversity across the deck instead of repeating the same packages on every card. Good patterns include `naniar::vis_miss()` for missing-data patterns, `MatchIt::matchit()` followed by `cobalt::bal.tab()` for propensity-score balance, `AER::ivreg()` for instrumental variables, `survival::Surv()` plus `survival::survfit()` for censoring and Kaplan–Meier curves, `deSolve::ode()` for SIR dynamics, `stats::acf()` for autocorrelation, and `sklearn.model_selection.TimeSeriesSplit` inside a `Pipeline` for leakage-resistant validation.
+- Add exactly one non-empty, actionable `NB:` footer to every card. Derive it
+  from the card's concept, preferring a direct implementation whenever
+  possible. If no direct implementation exists, use an honest adjacent
+  workflow that investigates, measures, visualizes, simulates, queries, tests,
+  or automates something meaningfully related to the concept. Always name a
+  specific package, function, method, command, application, or short workflow
+  and keep the note to one short sentence or two clauses. There is no
+  `not_applicable` option.
+- Actively search for the best NB application rather than adding a generic
+  footer after drafting the card. Never repeat the same exact NB idea,
+  operation, function, or workflow across cards; vary the tool, operation,
+  data task, or analytical angle while preserving a truthful connection.
+  Suitable ecosystems include Python, R and RStudio, SQL and PostgreSQL
+  (including SQLWorkbench), NoSQL, Excel and Microsoft 365, Google Sheets,
+  MATLAB or Octave, Julia, SAS, SPSS, Stata, Tableau, Power BI, Spark,
+  PySpark, dbt, Git, GitHub Actions, Linux, Bash, Docker, Jupyter, Quarto,
+  REST and JSON tools, C, C++, Java, JavaScript, and domain tools such as
+  NONMEM, Monolix, Phoenix WinNonlin, REDCap, QGIS, and ImageJ.
 - For opaque technical or scientific terms, try a sound-alike or near-homophone first, then build the picture around that substitute.
 - When the card depends on exact counts, ordered lists, thresholds, or small sequences, consider a phonetic-number or peg-word cue so the numbers themselves become memorable.
 - For tier-2 yield terms, use soft background highlights that vary within the deck instead of reusing one flat accent for the whole deck.
-- Recall hooks must use exactly one of the five approved hook colors: blue, green, red, purple, or navy. Tier-2 highlighting is independent and may continue using gold, pink, orange, and teal.
+- Recall hooks must use exactly one of the four approved hook colors: blue,
+  red, purple, or navy. Tier-2 highlighting is independent and may continue
+  using green, gold, pink, orange, purple, and teal.
 - Validate the full spec before export and keep the generator step in one obvious command.
 
 ## Back HTML Pattern
@@ -261,7 +288,8 @@ Prefer this order when the concept supports it:
 1. Short opening explanation
 2. Second paragraph that tightens the causal or practical point
 3. Optional bullet list for contrasts or breakdowns
-4. A short `.callout` recall hook when useful
+4. Exactly one `.callout` Recall hook
+5. Exactly one `.nb` NB footer
 
 ## Visual Rules
 
@@ -273,7 +301,8 @@ Prefer this order when the concept supports it:
 ## Useful HTML Classes
 
 - `.key` for high-yield terms
-- `.callout`, `.callout.green`, `.callout.gold`, `.callout.red`
+- `.callout`, `.callout.blue`, `.callout.navy`, `.callout.red`,
+  `.callout.purple`
 - `.nb` for tiny applied-footnote hints
 - Add a rotating family of `.tier2-*` or equivalent soft-highlight styles for second-tier yield words and definitions, including `.tier2-red` when useful.
 - `.blue`, `.red`, `.green`, `.gold`, `.pink`, `.orange`, `.purple`, `.teal`
@@ -285,7 +314,15 @@ Prefer this order when the concept supports it:
 ```json
 {
   "front": "What are instrumental variables?",
-  "back": "<p>...</p><p>...</p><div class=\"callout green\"><span class=\"green\">Recall hook:</span> ...</div>",
+  "back": "<p>...</p><p>...</p><div class=\"callout navy\"><span class=\"navy\">Recall hook:</span> ...</div>",
+  "recall_hook": {
+    "color": "navy",
+    "text": "..."
+  },
+  "nb": {
+    "mode": "actionable",
+    "text": "In Python, pandas.DataFrame.value_counts() can quantify the observed categories."
+  },
   "tags": ["Tag"]
 }
 ```

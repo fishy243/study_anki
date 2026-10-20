@@ -44,7 +44,7 @@ def callout(text: str, tone: str = "blue", label: str = "Recall hook:") -> str:
     normalized_tone = tone.casefold()
     if normalized_tone == "navy-blue":
         normalized_tone = "navy"
-    if normalized_tone not in {"blue", "green", "red", "purple", "navy"}:
+    if normalized_tone not in {"blue", "red", "purple", "navy"}:
         normalized_tone = "blue"
     return f'<div class="callout {normalized_tone}"><span class="{normalized_tone}">{label}</span> {text}</div>'
 

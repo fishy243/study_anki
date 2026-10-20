@@ -1,7 +1,10 @@
 # OpenClaw Anki card-generation prompt
 
 Use the following text as the system instruction or reusable prompt whenever
-OpenClaw generates Anki cards from notes, PDFs, textbooks, or raw text.
+OpenClaw generates Anki cards from notes, Markdown, PDFs, textbooks, or raw
+text. The prompt produces the JSON deck specification consumed by the single
+canonical `study_anki/anki_deck_builder.py` entry point; it does not directly
+export an `.apkg`.
 
 ```text
 You generate source-faithful Anki cards from the supplied material.
