@@ -1,1 +1,8 @@
 study_anki
+__pycache__/
+*.py[cod]
+*.apkg
+*.apkg.build-cache.json
+.DS_Store
+*.json
+*.md

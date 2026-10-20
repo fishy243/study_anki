@@ -34,24 +34,28 @@ Card constraints:
    `recall_hook` metadata object when the back does not already contain a
    valid hook. Its text must use the same formal register, summarize only the
    card’s single concept, and introduce no additional fact. Recall hooks may
-   use only blue, green, red, purple, or navy.
+   use only blue, red, purple, navy, or orange.
 10. Preserve the requested JSON/schema, tags, deck structure, HTML fields, and
    export options exactly. Do not add metadata to the answer field.
-11. Every card must contain exactly one NB footer. Use `nb.mode="actionable"`
-    with a concrete, immediately implementable computational step when one
-    exists; otherwise use `nb.mode="not_applicable"` with a truthful reason.
-    Name a specific package, function, method, or short workflow for
-    actionable notes. Keep it to one short sentence or two clauses.
+11. Every card must contain exactly one NB footer. Always use
+    `nb.mode="actionable"` with a concrete, immediately implementable
+    computational step. Actively search for the best NB application before
+    writing the card — never treat it as an afterthought. `nb.mode=
+    "not_applicable"` is not permitted. Name a specific package, function,
+    method, or short workflow. Keep it to one short sentence or two clauses.
 12. Ensure every `NB:` is concept-specific rather than a restatement of the
-    answer. Prefer diverse tools across a deck and avoid repeating the same
-    packages on every card. Suitable patterns include `naniar::vis_miss()` for
-    missing-data patterns, `MatchIt::matchit()` followed by
-    `cobalt::bal.tab()` for propensity-score balance, `AER::ivreg()` for
-    instrumental variables, `survival::Surv()` plus `survival::survfit()` for
-    censoring and Kaplan–Meier curves, `deSolve::ode()` for SIR dynamics,
-    `stats::acf()` for autocorrelation, and
-    `sklearn.model_selection.TimeSeriesSplit` inside a `Pipeline` for
-    leakage-resistant validation.
+    answer. Do not repeat the same NB idea, operation, function, or workflow
+    across cards; vary the ecosystem, operation, data task, or analytical
+    angle while keeping the connection truthful and concept-specific. Useful
+    ecosystems include Python (NumPy, pandas, SciPy, Matplotlib, seaborn,
+    scikit-learn, PyTorch, PyMC), R and RStudio (tidyverse, ggplot2,
+    data.table, survival, Stan, mrgsolve), SQL and PostgreSQL (including
+    SQLWorkbench), NoSQL, Excel and Microsoft 365 (formulas, PivotTables,
+    Power Query, Power Pivot, VBA, Office Scripts), Google Sheets, MATLAB or
+    Octave, Julia, SAS, SPSS, Stata, Tableau, Power BI, Spark or PySpark,
+    dbt, Git, GitHub Actions, Linux and Bash, Docker, Jupyter, Quarto, REST
+    and JSON tools, C, C++, Java, JavaScript, and domain tools such as NONMEM,
+    Monolix, Phoenix WinNonlin, REDCap, QGIS, and ImageJ.
 
 Before returning the cards, perform this editorial check:
 - Is each front a complete, context-complete question?
@@ -64,7 +68,8 @@ Before returning the cards, perform this editorial check:
   workflow within five minutes and observe a result that illuminates this
   card’s concept?
 - Does every card provide exactly one Recall hook and exactly one NB metadata
-  object, using `not_applicable` only for genuinely non-computational concepts?
+  object? Is every NB actionable, concept-specific, and distinct from any
+  other NB in the deck?
 ```
 
 ## Mathematics and quantitative methods
