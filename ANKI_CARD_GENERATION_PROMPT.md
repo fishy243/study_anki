@@ -37,43 +37,28 @@ Card constraints:
    `recall_hook` metadata object when the back does not already contain a
    valid hook. Its text must use the same formal register, summarize only the
    card’s single concept, and introduce no additional fact. Recall hooks may
-   use only blue, red, purple, or navy.
+   use only blue, red, purple, navy, or orange.
 10. Preserve the requested JSON/schema, tags, deck structure, HTML fields, and
    export options exactly. Do not add metadata to the answer field.
-11. Every card must contain exactly one rendered, non-empty, actionable NB
-    footer. Supply `nb.mode="actionable"` with a concrete computational,
-    analytical, visualization, query, simulation, automation, or diagnostic
-    step inferred from the card's concept. There is no `not_applicable` mode.
-    Prefer a direct implementation of the concept; when that is not possible,
-    choose an honest adjacent workflow that would help the learner investigate,
-    measure, visualize, simulate, query, or test the concept. Name a specific
-    package, function, method, command, application, or short workflow and
-    keep the note to one short sentence or two clauses.
-12. Actively search for the best NB application before writing the card, rather
-    than treating the NB as an afterthought. Do not repeat the same exact NB
-    idea, operation, function, or workflow across cards; vary the ecosystem,
-    operation, data task, or analytical angle while keeping the connection
-    truthful and concept-specific. Useful ecosystems include Python
-    (NumPy, pandas, SciPy, Matplotlib, seaborn, scikit-learn, PyTorch, and
-    PyMC), R and RStudio (tidyverse, ggplot2, data.table, survival, Stan, and
-    mrgsolve), SQL and PostgreSQL (including SQLWorkbench), NoSQL, Excel and
-    Microsoft 365 (formulas, PivotTables, Power Query, Power Pivot, VBA, and
-    Office Scripts), Google Sheets, MATLAB or Octave, Julia, SAS, SPSS, Stata,
-    Tableau, Power BI, Spark or PySpark, dbt, Git, GitHub Actions, Linux and
-    Bash, Docker, Jupyter, Quarto, REST and JSON tools, C, C++, Java,
-    JavaScript, and domain tools such as NONMEM, Monolix, Phoenix WinNonlin,
-    REDCap, QGIS, and ImageJ.
-
-Generation boundary:
-- Return a valid JSON deck specification with `deck_name` and `cards`; retain
-  requested optional fields such as `output_file`, `css`, and identifiers.
-- Keep HTML inside JSON string values valid and preserve source-faithful
-  images, equations, tags, and tier-2 markup.
-- Do not create or reference a deck-specific builder, `coursetext_anki`
-  pipeline, legacy workspace, or alternate export path.
-- The shared builder performs final normalization and validation immediately
-  before writing the `.apkg`; do not assume that a first-pass card is ready
-  for export.
+11. Every card must contain exactly one NB footer. Always use
+    `nb.mode="actionable"` with a concrete, immediately implementable
+    computational step. Actively search for the best NB application before
+    writing the card — never treat it as an afterthought. `nb.mode=
+    "not_applicable"` is not permitted. Name a specific package, function,
+    method, or short workflow. Keep it to one short sentence or two clauses.
+12. Ensure every `NB:` is concept-specific rather than a restatement of the
+    answer. Do not repeat the same NB idea, operation, function, or workflow
+    across cards; vary the ecosystem, operation, data task, or analytical
+    angle while keeping the connection truthful and concept-specific. Useful
+    ecosystems include Python (NumPy, pandas, SciPy, Matplotlib, seaborn,
+    scikit-learn, PyTorch, PyMC), R and RStudio (tidyverse, ggplot2,
+    data.table, survival, Stan, mrgsolve), SQL and PostgreSQL (including
+    SQLWorkbench), NoSQL, Excel and Microsoft 365 (formulas, PivotTables,
+    Power Query, Power Pivot, VBA, Office Scripts), Google Sheets, MATLAB or
+    Octave, Julia, SAS, SPSS, Stata, Tableau, Power BI, Spark or PySpark,
+    dbt, Git, GitHub Actions, Linux and Bash, Docker, Jupyter, Quarto, REST
+    and JSON tools, C, C++, Java, JavaScript, and domain tools such as NONMEM,
+    Monolix, Phoenix WinNonlin, REDCap, QGIS, and ImageJ.
 
 Before returning the cards, perform this editorial check:
 - Is each front a complete, context-complete question?
@@ -82,16 +67,12 @@ Before returning the cards, perform this editorial check:
 - Would the wording be acceptable in a carefully edited textbook?
 - Have casual phrases and sentence fragments been replaced without changing
   the source meaning?
-- Could the learner run the named function or workflow within five minutes and
-  observe a result that illuminates this card's concept?
-- Does every card provide exactly one Recall hook and exactly one rendered,
-  non-empty actionable NB footer?
-- Is the NB directly inferred from the card, or an honest adjacent application
-  selected after actively searching for a useful connection?
-- Is the NB distinct from the exact NB idea used on every other card in the
-  deck?
-- Is the returned object valid JSON with the required `deck_name` and `cards`
-  fields?
+- If an `NB:` footer is present, could the learner run the named function or
+  workflow within five minutes and observe a result that illuminates this
+  card’s concept?
+- Does every card provide exactly one Recall hook and exactly one NB metadata
+  object? Is every NB actionable, concept-specific, and distinct from any
+  other NB in the deck?
 ```
 
 ## Mathematics and quantitative methods
